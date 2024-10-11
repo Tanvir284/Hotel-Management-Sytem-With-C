@@ -297,7 +297,7 @@ int main() {
 			system("COLOR E1");
 			system("cls");
 			printf("\n\n\t\t\t\t\t       ************************\n");
-			printf("\t\t\t\t\t        *THE BUBT'S PALACE *");
+			printf("\t\t\t\t\t        *THE RUHIT'S PALACE *");
 			printf("\n\t\t\t\t\t       ************************\n\n\n");
 			printf("\n\n\t\t\t\t\t\t *************");
 			printf("\n\t\t\t\t\t\t * MAIN MENU *");
@@ -395,9 +395,9 @@ void Welcome_screen() {
 	delay(50);
 	printf("y- ");
 	delay(100);
-	char name[5][30] = { "1.MD Tanvir Islam\n\n","2.Mohiuddin Murad\n\n","3.Prianka mandol\n\n","4.Nabonita Ghosh\n\n","5. Md Khalid hossein\n\n"};
+	char name[5][30] = { "1.MD Tanvir Islam\n\n"};
 
-	for (int i = 0; i < 5; i++) {
+	for (int i = 0; i < 1; i++) {
 		printf("\n\t\t\t\t\t       ");
 		for (int j = 0; name[i][j] != '\0'; j++) {
 			delay(50);
@@ -426,7 +426,7 @@ void Welcome_screen() {
 
 
 int login() {
-	char usname[10], pword[10], code[10];
+	char usname[100], pword[100], code[100];
 	char c = ' ';
 	int a = 0, i;
 	system("COLOR 5E");
@@ -451,7 +451,7 @@ int login() {
 		pword[i] = '\0';
 		delay(05);
 
-		if (strcmpi(usname, "Ruhit") == 0 && strcmp(pword, "amijanina") == 0) {
+		if (strcmpi(usname, "Ruhit") == 0 && strcmp(pword, "0178642") == 0) {
 			delay(500);
 			printf("  \n\n\n\t\t\t\t WELCOME TO OUR SYSTEM !!!! LOGIN IS SUCCESSFUL");
 			delay(1000);
