@@ -6,6 +6,13 @@
 #include<time.h>
 #include<windows.h>
 
+
+#include "terminal_util.h"
+
+#define CONFIG_FILE "admin.cfg"
+#define HASH_KEY 7
+
+
 struct Hotel {
 	int room_no;
 	int Capacity;
@@ -33,7 +40,7 @@ void Calc_Amount();			//to calculate Customer Bill amount
 
 void Getdata(int r, int C, int code) {
 	char Gnd, Ch, ch1;
-	system("cls");
+	clear_screen();
 	H.room_no = r;
 	H.Capacity = C;
 	printf("\n Booking %d Members in Room No. %d\n", C, r);
@@ -41,8 +48,9 @@ void Getdata(int r, int C, int code) {
 	for (int i = 0; i < C; i++) {
 		printf("\n Enter details of Guest %d", i + 1);
 		while ((getchar()) != '\n');
-		printf("\n Name : ");
-		gets(H.Name[i]);
+		 printf("\n Name : ");
+                 fgets(H.Name[i], sizeof(H.Name[i]), stdin);
+                 H.Name[i][strcspn(H.Name[i], "\n")] = '\0';
 
 		while (1) {
 			printf(" Gender (M/F/T): ");
@@ -99,10 +107,12 @@ void Getdata(int r, int C, int code) {
 
 		if (i == 0 && code == 0) {
 			printf("\n Address: ");
-			while ((getchar()) != '\n');
-			gets(H.address);
-			printf(" Phone No: ");
-			gets(H.phone);
+               while ((getchar()) != '\n');
+               fgets(H.address, sizeof(H.address), stdin);
+               H.address[strcspn(H.address, "\n")] = '\0';
+               printf(" Phone No: ");
+               fgets(H.phone, sizeof(H.phone), stdin);
+               H.phone[strcspn(H.phone, "\n")] = '\0';
 		} else {
 			strcpy(H.address, "\0");
 			strcpy(H.phone, "\0");
@@ -146,7 +156,7 @@ void Calc_Amount() {
 
 void Putdata() {
 
-	system("cls");
+	clear_screen();
 	printf("\n  Customer Details");
 	printf("\n  ****************\n");
 	printf("\n Room no: ");
@@ -269,6 +279,8 @@ void delay(int time) {
 
 void Welcome_screen();	//to display Welcome screen
 int login();
+void hash_password(const char *input, char *output);
+int verify_password(const char *input, const char *stored_hash);
 int  Check(int);       //to check room status
 void Add();           //to book a room
 int Room_opt(int , int);
@@ -289,13 +301,13 @@ void Exit();
 int main() {
 	int choice = 0, check , true;
 	Welcome_screen();
-	system("cls");
+	clear_screen();
 	check = login();
 
 	if (check == 1) {
 		while (choice != 7) {
-			system("COLOR E1");
-			system("cls");
+			set_color("E1");
+			clear_screen();
 			printf("\n\n\t\t\t\t\t       ************************\n");
 			printf("\t\t\t\t\t        *THE RUHIT'S PALACE *");
 			printf("\n\t\t\t\t\t       ************************\n\n\n");
@@ -342,7 +354,7 @@ int main() {
 
 void Welcome_screen() {
 
-	system("COLOR A1");
+	set_color("A1");
 	char load[1][20] = {"LOADING...."};
 
 	for (int i = 0; i < 2; i++) {
@@ -354,7 +366,7 @@ void Welcome_screen() {
 	}
 
 	delay(50);
-	system("cls");
+	clear_screen();
 	printf("\n\t\t\t\t\t*");
 
 	for (int str = 1; str < 34; str++) {
@@ -425,11 +437,12 @@ void Welcome_screen() {
 
 
 
+
 int login() {
 	char usname[100], pword[100], code[100];
 	char c = ' ';
 	int a = 0, i;
-	system("COLOR 5E");
+	set_color("5E");
 
 	while (a < 3) {
 		printf("\n\t\t\t **************************  ADMIN LOGIN PAGE  ************************** \n\n");
@@ -448,16 +461,28 @@ int login() {
 			i++;
 		}
 
-		pword[i] = '\0';
-		delay(05);
+void hash_password(const char *input, char *output)
+{
+    int i, j=0;
+    for(i=0; input[i]; i++){
+        unsigned char v = input[i] ^ HASH_KEY;
+        sprintf(output + j, "%02X", v);
+        j += 2;
+    }
+    output[j] = '\0';
+}
 
-		if (strcmpi(usname, "Ruhit") == 0 && strcmp(pword, "0178642") == 0) {
-			delay(500);
-			printf("  \n\n\n\t\t\t\t WELCOME TO OUR SYSTEM !!!! LOGIN IS SUCCESSFUL");
-			delay(1000);
-			printf("\n\n\t\t\t\t\t Press any key to continue...");
-			getch();
-			return 1;
+
+int verify_password(const char *input, const char *stored_hash)
+{
+    char temp[256];
+    hash_password(input, temp);
+    if(strcmp(temp, stored_hash) == 0)
+        return 1;
+    return 0;
+}
+
+
 
 		} else {
 			printf("\n\n\n\t\t    Sorry !! Login is unsuccessful");
@@ -465,7 +490,7 @@ int login() {
 			printf("\n\t\t    Please try again! (Hint: password)");
 			getch();
 			if (a != 3)
-				system("cls");
+				clear_screen();
 		}
 		if (a == 3) {
 			delay(190);
@@ -477,19 +502,99 @@ int login() {
 	}
 	return 0;
 
+
+
+int login() {
+        char usname[100], pword[100];
+        char stored_user[100] = "", stored_hash[256] = "";
+        char c = ' ';
+        int a = 0, i;
+        FILE *fp = fopen(CONFIG_FILE, "r");
+
+        system("COLOR 5E");
+
+        if (fp == NULL) {
+                printf("\n No admin account found. Create new admin account.\n");
+                printf(" Enter new username:-");
+                scanf("%s", stored_user);
+                printf(" Enter new password:-");
+                i = 0;
+                while (i < 100) {
+                        c = getch();
+                        if (c == 13)
+                                break;
+                        pword[i] = c;
+                        printf("*");
+                        i++;
+                }
+                pword[i] = '\0';
+                hash_password(pword, stored_hash);
+                fp = fopen(CONFIG_FILE, "w");
+                if (fp) {
+                        fprintf(fp, "%s %s\n", stored_user, stored_hash);
+                        fclose(fp);
+                }
+                printf("\n Account created. Please login again.\n");
+        } else {
+                fscanf(fp, "%s %s", stored_user, stored_hash);
+                fclose(fp);
+        }
+
+        while (a < 3) {
+                printf("\n\t\t\t **************************  ADMIN LOGIN PAGE  ************************* \n\n");
+                delay(250);
+                printf(" \n\t\t                       ENTER USERNAME:-");
+                scanf("%s", usname);
+                printf(" \n\t\t                       ENTER PASSWORD:-");
+                i = 0;
+                while (i < 100) {
+                        c = getch();
+                        if (c == 13)
+                                break;
+                        pword[i] = c;
+                        printf("*");
+                        i++;
+                }
+                pword[i] = '\0';
+                delay(05);
+
+                if (strcmp(usname, stored_user) == 0 && verify_password(pword, stored_hash)) {
+                        delay(500);
+                        printf("  \n\n\n\t\t\t\t WELCOME TO OUR SYSTEM !!!! LOGIN IS SUCCESSFUL");
+                        delay(1000);
+                        printf("\n\n\t\t\t\t\t Press any key to continue...");
+                        getch();
+                        return 1;
+
+                } else {
+                        printf("\n\n\n\t\t    Sorry !! Login is unsuccessful");
+                        a++;
+                        printf("\n\t\t    Please try again! (Hint: password)");
+                        getch();
+                        if (a != 3)
+                                system("cls");
+                }
+                if (a == 3) {
+                        delay(190);
+                        printf("\n\n\t\t    You have entered wrong username or password 3 times.\n");
+                        delay(100);
+                        printf("\n\t\t    Press any key to exit");
+                        getch();
+                }
+        }
+        return 0;
+
 }
-
-
 
 
 int Room[30][20], Room_Allot[30][20], Empty[100], length = 0, R = 0;
 
 void Add() {
-	system("COLOR 5E");
+	set_color("5E");
 	int age[10], Total, count = 0, N, i, j, A, C = 0, choice;
 	char Ans = 'N';
 	do {
-		system("cls");
+		clear_screen();
 		printf("\n NOTE: Maximum No. of Guests that can book rooms at a time is 10\n\n");
 		printf("\n Enter No. of Adult guests:\n ");
 		scanf("%d", &A);
@@ -675,7 +780,7 @@ int Room_opt(int n, int choice) {	//find all combinations
 		}
 	}
 
-	system("cls");
+	clear_screen();
 	printf("\n Displaying Room choices for %d Guests\n\n", n);
 	printf(" Rooms option avialable:\n");
 
@@ -786,14 +891,14 @@ void FindCombinations(int arr[], int index, int num, int reducedNum) {
 
 void Display() {
 	fflush(stdout);
-	system("cls");
+	clear_screen();
 	FILE *fp = fopen("Record.txt", "r");
 	int r, flag = 0 , true;
 	char ch;
 
 	while ( true) {
 		fflush(stdout);
-		system("cls");
+		clear_screen();
 		if (fp == NULL) {
 			printf("\n No Records Found!!\nAll Rooms are Empty.");
 			getch();
@@ -840,7 +945,7 @@ void Room_stat(int code) {
 	size = Booking_stat(Booked);
 
 	if (size == -1 && code == 1) {
-		system("cls");
+		clear_screen();
 		printf("\n No Records Found!!\n All Rooms are Empty.");
 		getch();
 		return;
@@ -875,7 +980,7 @@ void Room_stat(int code) {
 	length = k;
 
 	if (code == 1) {
-		system("cls");
+		clear_screen();
 		printf("\n\t\t\t Rooms Status");
 		printf("\n\t\t\t**************\n\n");
 
@@ -1067,13 +1172,13 @@ int Booking_stat(int Booked[100]) {
 }
 
 void Modify_menu() {
-	system("cls");
-	system("COLOR 1E");
+	clear_screen();
+	set_color("1E");
 	int choice = 1, r;
 	char ch;
 
 	do {
-		system("cls");
+		clear_screen();
 		printf("\n\n\n\t\t\t\t\t  ***********");
 		printf("\n\t\t\t\t\t  MODIFY MENU");
 		printf("\n\t\t\t\t\t  ***********\n\n");
@@ -1090,7 +1195,7 @@ void Modify_menu() {
 	} while (choice < 1 || choice > 4);
 
 	if (choice > 0 && choice < 4) {
-		system("cls");
+		clear_screen();
 		printf("\n Enter room no: ");
 		scanf("%d", &r);
 
@@ -1121,10 +1226,10 @@ void Modify_menu() {
 }
 
 void Food_order(int r) {
-	system("cls");
-	system("COLOR 1E");
+	clear_screen();
+	set_color("1E");
 	delay(100);
-	system("cls");
+	clear_screen();
 
 	char Food[50][25] = {"SHAHI PANEER", "KADAI PANEER", "CHEESE KORMA", "MALAI KOFTA ", "MATAR PANEER",
 	                     "PALAK PANEER", "MIX VEGITABLES", "RAJMA MAKHANI", "DAL MAKHANI", "SALAD(GREEN)", "DUM ALOO",
@@ -1165,7 +1270,7 @@ void Food_order(int r) {
 
 	char Ch;
 	while (1) {
-		system("cls");
+		clear_screen();
 		printf("\n\t\t\t\t  *********");
 		printf("\n\t\t\t\t  MENU CARD");
 		printf("\n\t\t\t\t  *********");
@@ -1245,7 +1350,7 @@ void Food_order(int r) {
 
 void Modify_data(int r) {
 	fflush(stdout);
-	system("cls");
+	clear_screen();
 	long int pos;
 	int flag = 0;
 	FILE *fp = fopen("Record.txt", "r+");
@@ -1313,9 +1418,9 @@ void Retain() {        //to modify customer Record
 
 	if (strcmp(H.address, "\0") != 0) {
 		printf(" Address (press '0' to retain old one ) :  ");
-		gets(adrs);
-		printf(" Phone no (press '0' to retain old one) :  ");
-		scanf("%s", &Ph_no);
+               fgets(adrs, sizeof(adrs), stdin);
+               adrs[strcspn(adrs, "\n")] = '\0';
+               printf(" Phone no (press '0' to retain old one) :  ");
 	}
 
 	do {
@@ -1342,7 +1447,7 @@ void Laundry(int r) {
 	char Ch;
 	int flag = 0, l;
 	long pos;
-	system("cls");
+	clear_screen();
 	FILE *fp = fopen("Record.txt", "r+");
 	if (fp == NULL) {
 		printf("\n No Records Found!!\nAll Rooms are Empty.");
@@ -1390,8 +1495,8 @@ void Laundry(int r) {
 }
 
 void Check_out() {
-	system("cls");
-	system("COLOR CF");
+	clear_screen();
+	set_color("CF");
 	int r, flag = 0, R_no = 0;;
 	char ch;
 	printf("\n Enter room no: ");
@@ -1409,7 +1514,7 @@ void Check_out() {
 		}
 	}
 
-	system("cls");
+	clear_screen();
 	FILE *fptr1 = fopen("Record.txt", "r");
 	FILE *fptr2 = fopen("Temp.txt", "w");
 
@@ -1474,10 +1579,10 @@ void Check_out() {
 
 
 void Exit() {
-	system("cls");
+	clear_screen();
 
 	for (int j = 0; j < 2; j++) {
-		system("cls");
+		clear_screen();
 		printf("\n\n\n\n\n\n\n\n\n\t\t\t\t\tClosing Application");
 		for (int i = 0; i < 4; i++) {
 			delay(250);
@@ -1494,14 +1599,14 @@ void Exit() {
 
 void Room_Features() {
 	int r = 0;
-	system("cls");
+	clear_screen();
 
 	while (r < 1 || r > 100) {
 		printf("\n Enter a Room No. (1-100): ");
 		scanf("%d", &r);
 		if (r < 1 || r > 100) {
 			printf("\n Wrong Input!\n Please enter a value between 1 and 100.");
-			system("cls");
+			clear_screen();
 		}
 	}
 
