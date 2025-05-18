@@ -6,6 +6,7 @@
 #include<time.h>
 #include<windows.h>
 
+#include "terminal_util.h"
 struct Hotel {
 	int room_no;
 	int Capacity;
@@ -33,7 +34,7 @@ void Calc_Amount();			//to calculate Customer Bill amount
 
 void Getdata(int r, int C, int code) {
 	char Gnd, Ch, ch1;
-	system("cls");
+	clear_screen();
 	H.room_no = r;
 	H.Capacity = C;
 	printf("\n Booking %d Members in Room No. %d\n", C, r);
@@ -146,7 +147,7 @@ void Calc_Amount() {
 
 void Putdata() {
 
-	system("cls");
+	clear_screen();
 	printf("\n  Customer Details");
 	printf("\n  ****************\n");
 	printf("\n Room no: ");
@@ -289,13 +290,13 @@ void Exit();
 int main() {
 	int choice = 0, check , true;
 	Welcome_screen();
-	system("cls");
+	clear_screen();
 	check = login();
 
 	if (check == 1) {
 		while (choice != 7) {
-			system("COLOR E1");
-			system("cls");
+			set_color("E1");
+			clear_screen();
 			printf("\n\n\t\t\t\t\t       ************************\n");
 			printf("\t\t\t\t\t        *THE RUHIT'S PALACE *");
 			printf("\n\t\t\t\t\t       ************************\n\n\n");
@@ -342,7 +343,7 @@ int main() {
 
 void Welcome_screen() {
 
-	system("COLOR A1");
+	set_color("A1");
 	char load[1][20] = {"LOADING...."};
 
 	for (int i = 0; i < 2; i++) {
@@ -354,7 +355,7 @@ void Welcome_screen() {
 	}
 
 	delay(50);
-	system("cls");
+	clear_screen();
 	printf("\n\t\t\t\t\t*");
 
 	for (int str = 1; str < 34; str++) {
@@ -429,7 +430,7 @@ int login() {
 	char usname[100], pword[100], code[100];
 	char c = ' ';
 	int a = 0, i;
-	system("COLOR 5E");
+	set_color("5E");
 
 	while (a < 3) {
 		printf("\n\t\t\t **************************  ADMIN LOGIN PAGE  ************************** \n\n");
@@ -465,7 +466,7 @@ int login() {
 			printf("\n\t\t    Please try again! (Hint: password)");
 			getch();
 			if (a != 3)
-				system("cls");
+				clear_screen();
 		}
 		if (a == 3) {
 			delay(190);
@@ -485,11 +486,11 @@ int login() {
 int Room[30][20], Room_Allot[30][20], Empty[100], length = 0, R = 0;
 
 void Add() {
-	system("COLOR 5E");
+	set_color("5E");
 	int age[10], Total, count = 0, N, i, j, A, C = 0, choice;
 	char Ans = 'N';
 	do {
-		system("cls");
+		clear_screen();
 		printf("\n NOTE: Maximum No. of Guests that can book rooms at a time is 10\n\n");
 		printf("\n Enter No. of Adult guests:\n ");
 		scanf("%d", &A);
@@ -675,7 +676,7 @@ int Room_opt(int n, int choice) {	//find all combinations
 		}
 	}
 
-	system("cls");
+	clear_screen();
 	printf("\n Displaying Room choices for %d Guests\n\n", n);
 	printf(" Rooms option avialable:\n");
 
@@ -786,14 +787,14 @@ void FindCombinations(int arr[], int index, int num, int reducedNum) {
 
 void Display() {
 	fflush(stdout);
-	system("cls");
+	clear_screen();
 	FILE *fp = fopen("Record.txt", "r");
 	int r, flag = 0 , true;
 	char ch;
 
 	while ( true) {
 		fflush(stdout);
-		system("cls");
+		clear_screen();
 		if (fp == NULL) {
 			printf("\n No Records Found!!\nAll Rooms are Empty.");
 			getch();
@@ -840,7 +841,7 @@ void Room_stat(int code) {
 	size = Booking_stat(Booked);
 
 	if (size == -1 && code == 1) {
-		system("cls");
+		clear_screen();
 		printf("\n No Records Found!!\n All Rooms are Empty.");
 		getch();
 		return;
@@ -875,7 +876,7 @@ void Room_stat(int code) {
 	length = k;
 
 	if (code == 1) {
-		system("cls");
+		clear_screen();
 		printf("\n\t\t\t Rooms Status");
 		printf("\n\t\t\t**************\n\n");
 
@@ -1067,13 +1068,13 @@ int Booking_stat(int Booked[100]) {
 }
 
 void Modify_menu() {
-	system("cls");
-	system("COLOR 1E");
+	clear_screen();
+	set_color("1E");
 	int choice = 1, r;
 	char ch;
 
 	do {
-		system("cls");
+		clear_screen();
 		printf("\n\n\n\t\t\t\t\t  ***********");
 		printf("\n\t\t\t\t\t  MODIFY MENU");
 		printf("\n\t\t\t\t\t  ***********\n\n");
@@ -1090,7 +1091,7 @@ void Modify_menu() {
 	} while (choice < 1 || choice > 4);
 
 	if (choice > 0 && choice < 4) {
-		system("cls");
+		clear_screen();
 		printf("\n Enter room no: ");
 		scanf("%d", &r);
 
@@ -1121,10 +1122,10 @@ void Modify_menu() {
 }
 
 void Food_order(int r) {
-	system("cls");
-	system("COLOR 1E");
+	clear_screen();
+	set_color("1E");
 	delay(100);
-	system("cls");
+	clear_screen();
 
 	char Food[50][25] = {"SHAHI PANEER", "KADAI PANEER", "CHEESE KORMA", "MALAI KOFTA ", "MATAR PANEER",
 	                     "PALAK PANEER", "MIX VEGITABLES", "RAJMA MAKHANI", "DAL MAKHANI", "SALAD(GREEN)", "DUM ALOO",
@@ -1165,7 +1166,7 @@ void Food_order(int r) {
 
 	char Ch;
 	while (1) {
-		system("cls");
+		clear_screen();
 		printf("\n\t\t\t\t  *********");
 		printf("\n\t\t\t\t  MENU CARD");
 		printf("\n\t\t\t\t  *********");
@@ -1245,7 +1246,7 @@ void Food_order(int r) {
 
 void Modify_data(int r) {
 	fflush(stdout);
-	system("cls");
+	clear_screen();
 	long int pos;
 	int flag = 0;
 	FILE *fp = fopen("Record.txt", "r+");
@@ -1342,7 +1343,7 @@ void Laundry(int r) {
 	char Ch;
 	int flag = 0, l;
 	long pos;
-	system("cls");
+	clear_screen();
 	FILE *fp = fopen("Record.txt", "r+");
 	if (fp == NULL) {
 		printf("\n No Records Found!!\nAll Rooms are Empty.");
@@ -1390,8 +1391,8 @@ void Laundry(int r) {
 }
 
 void Check_out() {
-	system("cls");
-	system("COLOR CF");
+	clear_screen();
+	set_color("CF");
 	int r, flag = 0, R_no = 0;;
 	char ch;
 	printf("\n Enter room no: ");
@@ -1409,7 +1410,7 @@ void Check_out() {
 		}
 	}
 
-	system("cls");
+	clear_screen();
 	FILE *fptr1 = fopen("Record.txt", "r");
 	FILE *fptr2 = fopen("Temp.txt", "w");
 
@@ -1474,10 +1475,10 @@ void Check_out() {
 
 
 void Exit() {
-	system("cls");
+	clear_screen();
 
 	for (int j = 0; j < 2; j++) {
-		system("cls");
+		clear_screen();
 		printf("\n\n\n\n\n\n\n\n\n\t\t\t\t\tClosing Application");
 		for (int i = 0; i < 4; i++) {
 			delay(250);
@@ -1494,14 +1495,14 @@ void Exit() {
 
 void Room_Features() {
 	int r = 0;
-	system("cls");
+	clear_screen();
 
 	while (r < 1 || r > 100) {
 		printf("\n Enter a Room No. (1-100): ");
 		scanf("%d", &r);
 		if (r < 1 || r > 100) {
 			printf("\n Wrong Input!\n Please enter a value between 1 and 100.");
-			system("cls");
+			clear_screen();
 		}
 	}
 
