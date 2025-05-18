@@ -6,6 +6,9 @@
 #include<time.h>
 #include<windows.h>
 
+#define CONFIG_FILE "admin.cfg"
+#define HASH_KEY 7
+
 struct Hotel {
 	int room_no;
 	int Capacity;
@@ -272,6 +275,8 @@ void delay(int time) {
 
 void Welcome_screen();	//to display Welcome screen
 int login();
+void hash_password(const char *input, char *output);
+int verify_password(const char *input, const char *stored_hash);
 int  Check(int);       //to check room status
 void Add();           //to book a room
 int Room_opt(int , int);
@@ -428,61 +433,110 @@ void Welcome_screen() {
 
 
 
-int login() {
-	char usname[100], pword[100], code[100];
-	char c = ' ';
-	int a = 0, i;
-	system("COLOR 5E");
+void hash_password(const char *input, char *output)
+{
+    int i, j=0;
+    for(i=0; input[i]; i++){
+        unsigned char v = input[i] ^ HASH_KEY;
+        sprintf(output + j, "%02X", v);
+        j += 2;
+    }
+    output[j] = '\0';
+}
 
-	while (a < 3) {
-		printf("\n\t\t\t **************************  ADMIN LOGIN PAGE  ************************** \n\n");
-		delay(250);
-		printf(" \n\t\t                       ENTER USERNAME:-");
-		scanf("%s", &usname);
-		printf(" \n\t\t                       ENTER PASSWORD:-");
-		i = 0;
-		while (i < 100) {
-			pword[i] = getch();
-			c = pword[i];
-			if (c == 13)          //ASCII value of \n = 13
-				break;
-			else
-				printf("*");
-			i++;
-		}
-
-		pword[i] = '\0';
-		delay(05);
-
-		if (strcmpi(usname, "Ruhit") == 0 && strcmp(pword, "0178642") == 0) {
-			delay(500);
-			printf("  \n\n\n\t\t\t\t WELCOME TO OUR SYSTEM !!!! LOGIN IS SUCCESSFUL");
-			delay(1000);
-			printf("\n\n\t\t\t\t\t Press any key to continue...");
-			getch();
-			return 1;
-
-		} else {
-			printf("\n\n\n\t\t    Sorry !! Login is unsuccessful");
-			a++;
-			printf("\n\t\t    Please try again! (Hint: password)");
-			getch();
-			if (a != 3)
-				system("cls");
-		}
-		if (a == 3) {
-			delay(190);
-			printf("\n\n\t\t    You have entered wrong username or password 3 times.\n");
-			delay(100);
-			printf("\n\t\t    Press any key to exit");
-			getch();
-		}
-	}
-	return 0;
-
+int verify_password(const char *input, const char *stored_hash)
+{
+    char temp[256];
+    hash_password(input, temp);
+    if(strcmp(temp, stored_hash) == 0)
+        return 1;
+    return 0;
 }
 
 
+
+
+int login() {
+        char usname[100], pword[100];
+        char stored_user[100] = "", stored_hash[256] = "";
+        char c = ' ';
+        int a = 0, i;
+        FILE *fp = fopen(CONFIG_FILE, "r");
+
+        system("COLOR 5E");
+
+        if (fp == NULL) {
+                printf("\n No admin account found. Create new admin account.\n");
+                printf(" Enter new username:-");
+                scanf("%s", stored_user);
+                printf(" Enter new password:-");
+                i = 0;
+                while (i < 100) {
+                        c = getch();
+                        if (c == 13)
+                                break;
+                        pword[i] = c;
+                        printf("*");
+                        i++;
+                }
+                pword[i] = '\0';
+                hash_password(pword, stored_hash);
+                fp = fopen(CONFIG_FILE, "w");
+                if (fp) {
+                        fprintf(fp, "%s %s\n", stored_user, stored_hash);
+                        fclose(fp);
+                }
+                printf("\n Account created. Please login again.\n");
+        } else {
+                fscanf(fp, "%s %s", stored_user, stored_hash);
+                fclose(fp);
+        }
+
+        while (a < 3) {
+                printf("\n\t\t\t **************************  ADMIN LOGIN PAGE  ************************* \n\n");
+                delay(250);
+                printf(" \n\t\t                       ENTER USERNAME:-");
+                scanf("%s", usname);
+                printf(" \n\t\t                       ENTER PASSWORD:-");
+                i = 0;
+                while (i < 100) {
+                        c = getch();
+                        if (c == 13)
+                                break;
+                        pword[i] = c;
+                        printf("*");
+                        i++;
+                }
+                pword[i] = '\0';
+                delay(05);
+
+                if (strcmp(usname, stored_user) == 0 && verify_password(pword, stored_hash)) {
+                        delay(500);
+                        printf("  \n\n\n\t\t\t\t WELCOME TO OUR SYSTEM !!!! LOGIN IS SUCCESSFUL");
+                        delay(1000);
+                        printf("\n\n\t\t\t\t\t Press any key to continue...");
+                        getch();
+                        return 1;
+
+                } else {
+                        printf("\n\n\n\t\t    Sorry !! Login is unsuccessful");
+                        a++;
+                        printf("\n\t\t    Please try again! (Hint: password)");
+                        getch();
+                        if (a != 3)
+                                system("cls");
+                }
+                if (a == 3) {
+                        delay(190);
+                        printf("\n\n\t\t    You have entered wrong username or password 3 times.\n");
+                        delay(100);
+                        printf("\n\t\t    Press any key to exit");
+                        getch();
+                }
+        }
+        return 0;
+
+}
 
 
 int Room[30][20], Room_Allot[30][20], Empty[100], length = 0, R = 0;
