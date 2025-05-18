@@ -41,8 +41,9 @@ void Getdata(int r, int C, int code) {
 	for (int i = 0; i < C; i++) {
 		printf("\n Enter details of Guest %d", i + 1);
 		while ((getchar()) != '\n');
-		printf("\n Name : ");
-		gets(H.Name[i]);
+		 printf("\n Name : ");
+                 fgets(H.Name[i], sizeof(H.Name[i]), stdin);
+                 H.Name[i][strcspn(H.Name[i], "\n")] = '\0';
 
 		while (1) {
 			printf(" Gender (M/F/T): ");
