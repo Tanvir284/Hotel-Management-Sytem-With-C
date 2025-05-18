@@ -1,3 +1,30 @@
+
+# Hotel Management System
+
+This project provides a hotel management application written in C.
+Originally it was a console application. A minimal GUI prototype using
+**Win32 API** is now included in `gui-win32.c`.
+
+## Building (Console Version)
+Use any C compiler on Windows. For example using GCC:
+
+```bash
+gcc hotel-management-project-with-C.c -o hotel.exe
+```
+
+## Building (GUI Prototype)
+The GUI version requires the Windows SDK. Compile with a command similar to:
+
+```bash
+gcc gui-win32.c -o gui.exe -lgdi32 -mwindows
+```
+
+This creates a simple window with menu items that mirror the console menu.
+The features currently display a "not implemented" message.
+
+Further work is needed to migrate the booking, display and checkout
+functions into GUI dialogs.
+=======
 # Hotel Management System (C)
 
 This project is a console-based hotel management application written in C. It stores guest details in `Record.txt` and provides a simple text interface for booking and managing hotel rooms.
@@ -33,3 +60,4 @@ After a successful build, run the executable from the terminal:
 The application will create and update `Record.txt` in the current directory to store guest information. A temporary file `Temp.txt` is also used during modifications.
 
 Follow the on-screen menu to book rooms, view records, and manage hotel operations.
+
