@@ -100,10 +100,12 @@ void Getdata(int r, int C, int code) {
 
 		if (i == 0 && code == 0) {
 			printf("\n Address: ");
-			while ((getchar()) != '\n');
-			gets(H.address);
-			printf(" Phone No: ");
-			gets(H.phone);
+               while ((getchar()) != '\n');
+               fgets(H.address, sizeof(H.address), stdin);
+               H.address[strcspn(H.address, "\n")] = '\0';
+               printf(" Phone No: ");
+               fgets(H.phone, sizeof(H.phone), stdin);
+               H.phone[strcspn(H.phone, "\n")] = '\0';
 		} else {
 			strcpy(H.address, "\0");
 			strcpy(H.phone, "\0");
@@ -1314,9 +1316,9 @@ void Retain() {        //to modify customer Record
 
 	if (strcmp(H.address, "\0") != 0) {
 		printf(" Address (press '0' to retain old one ) :  ");
-		gets(adrs);
-		printf(" Phone no (press '0' to retain old one) :  ");
-		scanf("%s", &Ph_no);
+               fgets(adrs, sizeof(adrs), stdin);
+               adrs[strcspn(adrs, "\n")] = '\0';
+               printf(" Phone no (press '0' to retain old one) :  ");
 	}
 
 	do {
