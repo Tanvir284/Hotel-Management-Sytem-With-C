@@ -8,7 +8,7 @@
 
 
 #include "terminal_util.h"
-=======
+
 #define CONFIG_FILE "admin.cfg"
 #define HASH_KEY 7
 
